@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khao Dam Cafe — Bangkok</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500&display=swap');
+
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    :root {
+      --ink:       #080808;
+      --smoke:     #141414;
+      --charcoal:  #1e1e1e;
+      --ash:       #2c2c2c;
+      --stone:     #525252;
+      --fog:       #8a8a8a;
+      --mist:      #c0bebb;
+      --paper:     #f2f0eb;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAVIGATION ──────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 900;
+      padding: 28px 56px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.5s ease, border-bottom 0.5s ease;
+    }
+    .nav.stuck {
+      background: rgba(8, 8, 8, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--ash);
+    }
+    .nav-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.48em;
+      text-transform: uppercase;
+      color: var(--paper);
+      text-decoration: none;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 44px;
+    }
+    .nav-links a {
+      font-size: 9.5px;
+      font-weight: 400;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--fog);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+    .nav-links a:hover { color: var(--paper); }
+
+    /* ─── HERO ────────────────────────────────────────── */
+    .hero {
+      height: 100vh;
+      min-height: 680px;
+      position: relative;
+      display: grid;
+      grid-template-columns: 52% 48%;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 72px 0 56px;
+      background: var(--ink);
+    }
+
+    .hero-kicker {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+    .hero-kicker::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--stone);
+    }
+    .hero-kicker span {
+      font-size: 9.5px;
+      font-weight: 400;
+      letter-spacing: 0.48em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    .hero-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(72px, 9.5vw, 148px);
+      font-weight: 300;
+      line-height: 0.87;
+      letter-spacing: -0.015em;
+      color: var(--paper);
+      margin-bottom: 52px;
+    }
+    .hero-headline .italic {
+      display: block;
+      font-style: italic;
+      color: var(--mist);
+    }
+
+    .hero-body {
+      font-size: 12.5px;
+      line-height: 1.9;
+      color: var(--stone);
+      max-width: 340px;
+      margin-bottom: 52px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+    .btn-primary {
+      font-size: 9.5px;
+      font-weight: 400;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: var(--paper);
+      padding: 15px 30px;
+      text-decoration: none;
+      transition: background 0.25s;
+      white-space: nowrap;
+    }
+    .btn-primary:hover { background: var(--mist); }
+    .btn-ghost {
+      font-size: 9.5px;
+      font-weight: 400;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--fog);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+    .btn-ghost:hover { color: var(--paper); }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 56px;
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      z-index: 2;
+    }
+    .scroll-indicator span {
+      font-size: 9px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--ash);
+    }
+    .scroll-bar {
+      width: 1px;
+      height: 52px;
+      background: var(--ash);
+      overflow: hidden;
+      position: relative;
+    }
+    .scroll-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 48%;
+      background: var(--fog);
+      animation: dropScroll 2s ease-in-out infinite;
+    }
+    @keyframes dropScroll {
+      0%   { transform: translateY(-100%); opacity: 0; }
+      20%  { opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translateY(220%); opacity: 0; }
+    }
+
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      filter: grayscale(100%) contrast(1.1) brightness(0.55);
+      transition: transform 12s ease;
+    }
+    .hero-right:hover img { transform: scale(1.04); }
+    /* left edge fade */
+    .hero-right::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 30%;
+      height: 100%;
+      background: linear-gradient(to right, var(--ink), transparent);
+      z-index: 1;
+    }
+    /* bottom vignette */
+    .hero-right::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 25%;
+      background: linear-gradient(to top, var(--ink), transparent);
+      z-index: 1;
+    }
+
+    /* ─── MANIFESTO ───────────────────────────────────── */
+    .manifesto {
+      padding: 160px 56px;
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 9.5px;
+      font-weight: 400;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-bottom: 40px;
+    }
+    .tag::after {
+      content: '';
+      display: block;
+      width: 36px;
+      height: 1px;
+      background: var(--ash);
+    }
+    .big-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(34px, 4.2vw, 56px);
+      font-weight: 300;
+      line-height: 1.22;
+      color: var(--paper);
+    }
+    .big-quote em {
+      font-style: italic;
+      color: var(--fog);
+    }
+
+    .manifesto-right {
+      padding-top: 12px;
+    }
+    .manifesto-body {
+      font-size: 13px;
+      line-height: 1.95;
+      color: var(--stone);
+      margin-bottom: 32px;
+    }
+    .stat-row {
+      display: flex;
+      gap: 56px;
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid var(--ash);
+    }
+    .stat-item {}
+    .stat-n {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px;
+      font-weight: 300;
+      color: var(--mist);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-l {
+      font-size: 9px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    /* ─── GALLERY STRIP ───────────────────────────────── */
+    .gallery {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr;
+      gap: 3px;
+      height: 580px;
+    }
+    .gallery-cell {
+      overflow: hidden;
+      position: relative;
+    }
+    .gallery-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%) contrast(1.12) brightness(0.7);
+      transition: transform 0.95s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  filter 0.95s ease;
+    }
+    .gallery-cell:hover img {
+      transform: scale(1.06);
+      filter: grayscale(100%) contrast(1.18) brightness(0.8);
+    }
+    .gallery-label {
+      position: absolute;
+      bottom: 22px;
+      left: 24px;
+      font-size: 9px;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: rgba(242, 240, 235, 0.38);
+      pointer-events: none;
+      transition: color 0.4s;
+    }
+    .gallery-cell:hover .gallery-label {
+      color: rgba(242, 240, 235, 0.65);
+    }
+
+    /* ─── MENU SECTION ────────────────────────────────── */
+    .menu-section {
+      background: var(--smoke);
+      padding: 140px 56px;
+    }
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--ash);
+      margin-bottom: 0;
+    }
+    .display-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 5.5vw, 78px);
+      font-weight: 300;
+      line-height: 1;
+      color: var(--paper);
+    }
+    .section-ordinal {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 88px;
+      font-weight: 300;
+      color: var(--charcoal);
+      line-height: 1;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .menu-item {
+      padding: 44px 36px;
+      border-right: 1px solid var(--ash);
+      border-bottom: 1px solid var(--ash);
+      transition: background 0.3s ease;
+      cursor: default;
+    }
+    .menu-item:nth-child(3n) { border-right: none; }
+    .menu-item:hover { background: var(--charcoal); }
+
+    .item-idx {
+      font-size: 9px;
+      letter-spacing: 0.32em;
+      color: var(--stone);
+      margin-bottom: 28px;
+    }
+    .item-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--paper);
+      margin-bottom: 6px;
+      line-height: 1.1;
+    }
+    .item-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 16px;
+      color: var(--fog);
+      margin-bottom: 20px;
+    }
+    .item-desc {
+      font-size: 11.5px;
+      line-height: 1.85;
+      color: var(--stone);
+      margin-bottom: 32px;
+    }
+    .item-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-top: 22px;
+      border-top: 1px solid var(--ash);
+    }
+    .item-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 300;
+      color: var(--mist);
+    }
+    .item-type {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    /* ─── SPACE SECTION ───────────────────────────────── */
+    .space-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 620px;
+    }
+    .space-img {
+      overflow: hidden;
+      position: relative;
+    }
+    .space-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+      filter: grayscale(100%) contrast(1.12) brightness(0.6);
+      transition: transform 1s ease;
+    }
+    .space-section:hover .space-img img { transform: scale(1.04); }
+    .space-content {
+      background: var(--charcoal);
+      padding: 80px 72px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .space-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(34px, 3.8vw, 52px);
+      font-weight: 300;
+      line-height: 1.18;
+      color: var(--paper);
+      margin-bottom: 32px;
+    }
+    .space-title em {
+      font-style: italic;
+      color: var(--fog);
+    }
+    .space-body {
+      font-size: 12.5px;
+      line-height: 1.95;
+      color: var(--stone);
+    }
+    .space-rule {
+      width: 40px;
+      height: 1px;
+      background: var(--ash);
+      margin: 40px 0;
+    }
+    .space-detail {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--stone);
+      line-height: 2;
+    }
+
+    /* ─── VISIT ───────────────────────────────────────── */
+    .visit-section {
+      padding: 160px 56px;
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+    .hours-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 5.5vw, 78px);
+      font-weight: 300;
+      color: var(--paper);
+      margin-bottom: 48px;
+    }
+    .hours-table { width: 100%; border-collapse: collapse; }
+    .hours-table tr { border-bottom: 1px solid var(--ash); }
+    .hours-table td {
+      padding: 18px 0;
+      font-size: 13px;
+      color: var(--stone);
+    }
+    .hours-table td:first-child { color: var(--mist); }
+    .hours-table td:last-child {
+      text-align: right;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 300;
+    }
+
+    .visit-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 48px;
+      padding-bottom: 4px;
+    }
+    .info-block h4 {
+      font-size: 9.5px;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-bottom: 16px;
+    }
+    .info-block p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--mist);
+    }
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 400;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      color: var(--paper);
+      border: 1px solid var(--ash);
+      padding: 18px 38px;
+      text-decoration: none;
+      width: fit-content;
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .btn-outline:hover {
+      border-color: var(--fog);
+      background: var(--ash);
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────── */
+    .site-footer {
+      border-top: 1px solid var(--ash);
+      padding: 36px 56px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: center;
+    }
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 12px;
+      letter-spacing: 0.44em;
+      text-transform: uppercase;
+      color: var(--paper);
+      text-decoration: none;
+    }
+    .footer-center {
+      text-align: center;
+      font-size: 9.5px;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+    .footer-right {
+      text-align: right;
+      font-size: 9.5px;
+      letter-spacing: 0.18em;
+      color: var(--stone);
+    }
+
+    /* ─── REVEAL ANIMATION ────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.85s ease, transform 0.85s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-brand">Khao Dam</a>
+    <ul class="nav-links">
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#about">The Space</a></li>
+      <li><a href="#visit">Visit</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-kicker">
+        <span>Bangkok &nbsp;·&nbsp; Est. 2019</span>
+      </div>
+      <h1 class="hero-headline">
+        KHAO<br>
+        <span class="italic">Dam</span><br>
+        CAFE
+      </h1>
+      <p class="hero-body">
+        A quiet destination for those who drink with intention.
+        Black coffee, clean space, no distraction.
+      </p>
+      <div class="hero-actions">
+        <a href="#menu" class="btn-primary">Explore Menu</a>
+        <a href="#visit" class="btn-ghost">Find Us &nbsp;→</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <img
+        src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&q=88&fit=crop"
+        alt=""
+        aria-hidden="true"
+        id="heroImg"
+      >
+    </div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-bar"></div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section style="background: var(--ink);">
+    <div class="manifesto">
+      <div class="manifesto-left reveal">
+        <p class="tag">Philosophy</p>
+        <h2 class="big-quote">
+          Coffee is not<br>a ritual —<br>it is a <em>reckoning</em>.
+        </h2>
+      </div>
+      <div class="manifesto-right reveal">
+        <p class="manifesto-body">
+          Khao Dam means "black mountain." The name carries the weight of our approach. We don't dress up coffee. We don't fill spaces with noise or color. We let the work speak in the language it already knows: silence, precision, depth.
+        </p>
+        <p class="manifesto-body">
+          Every origin we carry has been tasted blind, sourced directly, and prepared with a restraint that most cafes find uncomfortable. We are comfortable with discomfort.
+        </p>
+        <div class="stat-row">
+          <div class="stat-item">
+            <p class="stat-n">14</p>
+            <p class="stat-l">Single Origins</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-n">4×</p>
+            <p class="stat-l">Seasonal Rotations</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-n">1</p>
+            <p class="stat-l">Location · Always</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <div class="gallery">
+    <div class="gallery-cell">
+      <img
+        src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=900&q=88&fit=crop"
+        alt="Espresso"
+      >
+      <span class="gallery-label">The Cup</span>
+    </div>
+    <div class="gallery-cell">
+      <img
+        src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&q=88&fit=crop&crop=center"
+        alt="Coffee beans"
+      >
+      <span class="gallery-label">The Origin</span>
+    </div>
+    <div class="gallery-cell">
+      <img
+        src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=600&q=88&fit=crop"
+        alt="Brewing"
+      >
+      <span class="gallery-label">The Method</span>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <section class="menu-section" id="menu">
+    <div class="menu-header">
+      <h2 class="display-title reveal">The Menu</h2>
+      <span class="section-ordinal">02</span>
+    </div>
+    <div class="menu-grid">
+
+      <div class="menu-item reveal">
+        <p class="item-idx">01 — Espresso</p>
+        <h3 class="item-name">Nero</h3>
+        <p class="item-sub">Single Origin · Ristretto</p>
+        <p class="item-desc">Dense, syrupy, and complete. Pulled short to concentrate sweetness. Current origin: Yirgacheffe, Ethiopia — stone fruit and dark chocolate.</p>
+        <div class="item-footer">
+          <span class="item-price">฿75</span>
+          <span class="item-type">Hot · Iced</span>
+        </div>
+      </div>
+
+      <div class="menu-item reveal">
+        <p class="item-idx">02 — Pour Over</p>
+        <h3 class="item-name">Clarity</h3>
+        <p class="item-sub">V60 · Batch Filtered</p>
+        <p class="item-desc">Clean and open. A method for coffee that wants to be understood rather than felt. Light roast, high clarity, long finish.</p>
+        <div class="item-footer">
+          <span class="item-price">฿120</span>
+          <span class="item-type">Hot Only</span>
+        </div>
+      </div>
+
+      <div class="menu-item reveal">
+        <p class="item-idx">03 — Cold Brew</p>
+        <h3 class="item-name">The Still</h3>
+        <p class="item-sub">18-Hour Cold Extraction</p>
+        <p class="item-desc">No ice. No dilution. Served at 8°C in a chilled glass. Low acid, dark chocolate and tobacco, long finish.</p>
+        <div class="item-footer">
+          <span class="item-price">฿140</span>
+          <span class="item-type">Cold Only</span>
+        </div>
+      </div>
+
+      <div class="menu-item reveal">
+        <p class="item-idx">04 — White Coffee</p>
+        <h3 class="item-name">Dam White</h3>
+        <p class="item-sub">Double Ristretto · Oat</p>
+        <p class="item-desc">The only milk coffee we serve. Oat milk steamed to 58°C. Nothing added. Nothing hidden. The espresso still leads.</p>
+        <div class="item-footer">
+          <span class="item-price">฿110</span>
+          <span class="item-type">Hot · Iced</span>
+        </div>
+      </div>
+
+      <div class="menu-item reveal">
+        <p class="item-idx">05 — Aeropress</p>
+        <h3 class="item-name">Pressure</h3>
+        <p class="item-sub">Inverted Brew · Staff Pick</p>
+        <p class="item-desc">Bold, full-bodied, direct. A method that tolerates no ambiguity. Ground per order. Served immediately. No waiting.</p>
+        <div class="item-footer">
+          <span class="item-price">฿105</span>
+          <span class="item-type">Hot Only</span>
+        </div>
+      </div>
+
+      <div class="menu-item reveal">
+        <p class="item-idx">06 — Sparkling</p>
+        <h3 class="item-name">The Contrast</h3>
+        <p class="item-sub">Espresso Over Tonic</p>
+        <p class="item-desc">One shot, premium tonic water, no garnish. The bitterness of coffee meets the bitterness of quinine. An argument in a glass.</p>
+        <div class="item-footer">
+          <span class="item-price">฿130</span>
+          <span class="item-type">Iced</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- THE SPACE -->
+  <section class="space-section" id="about">
+    <div class="space-img">
+      <img
+        src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=900&q=88&fit=crop"
+        alt="Cafe interior"
+      >
+    </div>
+    <div class="space-content">
+      <p class="tag reveal">The Space</p>
+      <h2 class="space-title reveal">
+        Designed for<br>
+        the <em>distraction-free</em><br>
+        mind.
+      </h2>
+      <p class="space-body reveal">
+        No music after 10am. No laptop seating on weekends. The space is sparse by design — not to be unwelcoming, but to give each guest what good thinking requires. We believe coffee and silence are the same conversation.
+      </p>
+      <div class="space-rule reveal"></div>
+      <p class="space-detail reveal">
+        Seating for 18 &nbsp;·&nbsp; No reservations during service<br>
+        Private tastings available Tuesday evenings
+      </p>
+    </div>
+  </section>
+
+  <!-- VISIT -->
+  <section class="visit-section" id="visit">
+    <div>
+      <h2 class="hours-title reveal">Hours</h2>
+      <table class="hours-table reveal">
+        <tbody>
+          <tr>
+            <td>Monday – Friday</td>
+            <td>07:00 – 18:00</td>
+          </tr>
+          <tr>
+            <td>Saturday</td>
+            <td>08:00 – 17:00</td>
+          </tr>
+          <tr>
+            <td>Sunday</td>
+            <td>Closed</td>
+          </tr>
+          <tr>
+            <td>Public Holidays</td>
+            <td>Varies</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="visit-right">
+      <div class="info-block reveal">
+        <h4>Location</h4>
+        <p>
+          42 Sukhumvit Soi 49<br>
+          Khlongton Nua, Bangkok<br>
+          10110, Thailand
+        </p>
+      </div>
+      <div class="info-block reveal">
+        <h4>Contact</h4>
+        <p>hello@khaodamcafe.com</p>
+      </div>
+      <a href="#" class="btn-outline reveal">Reserve Private Tasting</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <a href="#" class="footer-brand">Khao Dam Cafe</a>
+    <p class="footer-center">Black Coffee · Bangkok</p>
+    <p class="footer-right">© 2026 Khao Dam</p>
+  </footer>
+
+  <script>
+    // Nav scroll state
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('stuck', window.scrollY > 60);
+    }, { passive: true });
+
+    // Hero image subtle parallax
+    const heroImg = document.getElementById('heroImg');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (y < window.innerHeight * 1.2) {
+        heroImg.style.transform = `translateY(${y * 0.18}px)`;
+      }
+    }, { passive: true });
+
+    // Scroll reveal
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      // Stagger siblings in the same parent
+      const siblings = Array.from(el.parentElement.querySelectorAll('.reveal'));
+      const idx = siblings.indexOf(el);
+      el.style.transitionDelay = `${idx * 0.08}s`;
+      io.observe(el);
+    });
+  </script>
+</body>
+</html>
